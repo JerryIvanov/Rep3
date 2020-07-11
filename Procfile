@@ -1,1 +1,1 @@
-web: ./hello-world
+web: ./Main
