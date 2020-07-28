@@ -1,5 +1,8 @@
 package Meeting;
 
+import AdminsPanel.AdminsManager;
+import LineAndStation.LineManager;
+import LineAndStation.MetroStation;
 import Main.Main;
 import Users.Session;
 import Users.UserThread;
@@ -9,6 +12,8 @@ import org.apache.logging.log4j.Logger;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+
+import static Main.Main.sleepTimeToDelete;
 
 public class SessionMeets extends Thread{
     private Logger sessionLogger = LogManager.getLogger(SessionMeets.class);
@@ -24,7 +29,7 @@ public class SessionMeets extends Thread{
     private boolean collector;
 
 
-    public SessionMeets (boolean collector, BuildMeeting thread, Meeting meeting, int timeSession){
+    public  SessionMeets (boolean collector, BuildMeeting thread, Meeting meeting, int timeSession){
         if(thread != null) {
             this.isThread = true;
             this.thread = thread;
@@ -33,6 +38,7 @@ public class SessionMeets extends Thread{
         else if(meeting != null){
             this.isThread = false;
             this.meeting = meeting;
+            meeting.getMetroStation().sendNotifyUsers(meeting);
             this.idSession = meeting.getIdMeeting();
 
         }
@@ -67,17 +73,23 @@ public class SessionMeets extends Thread{
             }
             else Thread.sleep(timeSession);
             if(collector){
-                List<Meeting> list = new ArrayList<Meeting>();
-                for (Map.Entry pair: Meetings.getMeetings().entrySet()
-                ) {
-                    list.addAll((List<Meeting>) pair.getValue());
-                }
-                for (Meeting meet: list
+                for (Map.Entry<Long, List<Meeting>> pair: Meetings.getMeetings().entrySet()
+                )
+                for (Meeting meet: pair.getValue()
                      ) {
                     meet.destroyThisSoftly();
                 }
-                Main.sleepTimeToDelete();
+                for (Map.Entry<String, MetroStation> pair: LineManager.getMetroStationMap().entrySet()
+                     ) {
+                    MetroStation metroStation = pair.getValue();
+                    metroStation.clearNotifyList();
+                }
+                Thread.sleep(1000);
+                this.interrupt();
+                AdminsManager.statistics.clear();
                 UsersManager.getBot().sendMessageClearMeetings();
+                sleepTimeToDelete();
+                Thread.sleep(100);
             }
         } catch (InterruptedException e) {
             sessionLogger.info("Сессия пользователя " + idSession + " закрыта.(sleep interrupted)");
@@ -94,7 +106,7 @@ public class SessionMeets extends Thread{
     }
 
     private int parseToSeconds(String [] arr){
-        int HH = Integer.parseInt(arr[0]) * 60 * 60;
+        int HH = ((Integer.parseInt(arr[0]))) * 60 * 60;
         int mm = Integer.parseInt(arr[1]) * 60;
         int ss = Integer.parseInt(arr[2]);
         return (HH + mm + ss);

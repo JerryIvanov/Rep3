@@ -4,8 +4,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+
+import AdminsPanel.AdminsManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 
 public class Session extends Thread{
 
@@ -38,7 +41,8 @@ public class Session extends Thread{
                     timeActual.remove(idSession);
                     userThreads.get(idSession).interrupt();
                     userThreads.remove(idSession);
-                    UsersManager.getBot().sendMessage("⏰Ваша сессия закрыта⏰", idSession);
+                    UsersManager.getBot().sendMessage("⏰Ваша сессия закрыта⏰", idSession, new ReplyKeyboardRemove());
+                    AdminsManager.statistics.set(1, + 1);
                 }
 
         } catch (InterruptedException e) {

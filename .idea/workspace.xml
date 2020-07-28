@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9a9a75c4-201d-49b2-b598-6e40d216f6e1" name="Default Changelist" comment="" />
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -20,26 +19,34 @@
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/TeleBOt3" />
     <option name="ROOT_SYNC" value="DONT_SYNC" />
   </component>
-  <component name="MavenImportPreferences">
-    <option name="importingSettings">
-      <MavenImportingSettings>
-        <option name="importAutomatically" value="true" />
-      </MavenImportingSettings>
-    </option>
-  </component>
   <component name="ProjectId" id="1dUheIisaxNrDwlAMuTEp2AG9SV" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="autoscrollFromSource" value="true" />
+    <option name="autoscrollToSource" value="true" />
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="aspect.path.notification.shown" value="true" />
     <property name="last_directory_selection" value="$PROJECT_DIR$/src/main/java" />
-    <property name="last_opened_file_path" value="C:/Program Files (x86)/Git/git-bash.exe" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="AdminsPanel.UsersClasses" />
+      <recent name="AdminsPanel.AdminsClasses" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\JerryIvanov\IdeaProjects\TeleBot2\src\main\java\Admin\AdminsClasses" />
       <recent name="C:\Users\JerryIvanov\IdeaProjects\TeleBot2\lib" />
       <recent name="C:\Users\JerryIvanov\IdeaProjects\TeleBot2\src\main\resources\db" />
       <recent name="C:\Users\JerryIvanov\IdeaProjects\TeleBot2\src\main\resources\metroStation" />
@@ -49,22 +56,10 @@
       <recent name="C:\Users\JerryIvanov\IdeaProjects\TeleBot2" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
   <component name="RunManager">
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="Main.Main" />
-      <module name="TeleBot2" />
+      <module name="TeleBot2Test" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -85,8 +80,17 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1592485672380</updated>
+      <workItem from="1595508795524" duration="666000" />
+      <workItem from="1595597940763" duration="6833000" />
+      <workItem from="1595762480144" duration="18000" />
+      <workItem from="1595875233748" duration="353000" />
+      <workItem from="1595939559571" duration="8000" />
+      <workItem from="1595939655653" duration="55000" />
     </task>
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
@@ -98,10 +102,46 @@
         </entry>
       </map>
     </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <ignored-roots>
       <path value="$PROJECT_DIR$" />
+      <path value="$PROJECT_DIR$/TeleBOt3" />
     </ignored-roots>
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="464" y="32" key="#Main" timestamp="1595599216815">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="464" y="32" key="#Main/0.0.1536.824@0.0.1536.824" timestamp="1595599216815" />
+    <state x="549" y="127" key="FileChooserDialogImpl" timestamp="1595939566145">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="549" y="127" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1595939566145" />
+    <state width="1493" height="210" key="GridCell.Tab.0.bottom" timestamp="1595604689004">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="210" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1595604689004" />
+    <state width="1493" height="210" key="GridCell.Tab.0.center" timestamp="1595604689004">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="210" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1595604689004" />
+    <state width="1493" height="210" key="GridCell.Tab.0.left" timestamp="1595604689003">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="210" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1595604689003" />
+    <state width="1493" height="210" key="GridCell.Tab.0.right" timestamp="1595604689004">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state width="1493" height="210" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1595604689004" />
+    <state x="277" y="57" key="SettingsEditor" timestamp="1595508899052">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="277" y="57" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1595508899052" />
+    <state x="209" y="33" key="new project wizard" timestamp="1595509456719">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="209" y="33" key="new project wizard/0.0.1536.824@0.0.1536.824" timestamp="1595509456719" />
   </component>
 </project>

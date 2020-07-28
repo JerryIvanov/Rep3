@@ -1,1 +1,1 @@
-web: ./Main
+worker: sh target/bin/TargetBot

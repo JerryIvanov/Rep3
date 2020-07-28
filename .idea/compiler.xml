@@ -7,6 +7,8 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="TeleBot2" />
+        <module name="TeleBot2Test" />
+        <module name="Bot2" />
       </profile>
     </annotationProcessing>
   </component>

@@ -6,9 +6,11 @@ import Meeting.Meeting;
 import Meeting.Meetings;
 import Steps.StepOne.Step_1;
 import Steps.StepThree.Step_3_1;
+import Steps.StepThree.Step_3_2;
 import Steps.StepTwo.Step_2;
 import Steps.StepThree.Step_3;
 import Steps.StepTwo.Step_2_1;
+import Steps.StepTwo.Step_2_2;
 import Steps.StepZero.Step_0;
 import org.telegram.telegrambots.meta.api.objects.Update;
 
@@ -60,7 +62,7 @@ public class UserThread extends Thread{
 
             }
         } catch (Exception e) {
-            //e.printStackTrace();
+            e.printStackTrace();
             userLogger.info("Thread user " + chatUserId + " is stopped");
         }
     }
@@ -84,6 +86,10 @@ public class UserThread extends Thread{
             userLogger.info("Step 2.1 worked.");
             Step_2_1.step_2_1(this);
         }
+        else if (step == 2.2){
+            userLogger.info("Step 2.2 worked");
+            Step_2_2.step_2_2(this);
+        }
         else if (step == 3d){
             userLogger.info("Step 3 worked.");
             Step_3.step_3(this);
@@ -92,17 +98,21 @@ public class UserThread extends Thread{
             userLogger.info("Step 3.1 worked.");
             new Step_3_1(this).start();
         }
+        else if(step == 3.2){
+            userLogger.info("Step 3.2 worked.");
+            Step_3_2.step_3_2(this);
+        }
         else if (step == 3.01){
             userLogger.info("Step 3.01 worked");
             Meetings.addMeeting(this);
         }
     }
     public synchronized void activationSession(Update update){
-        if(update.hasCallbackQuery()) {
-            message = update.getCallbackQuery().getData().toUpperCase();
-        }
-        else message = update.getMessage().getText().toUpperCase();
         this.update = update;
+        message = update.hasCallbackQuery() ? update.getCallbackQuery().getData()
+                : update.getMessage().getText();
+        message = message == null ? "" : message;
+        userLogger.info("Message = ");
         new Session(this, timeSessionUserThread).start();
         sessionIsActive = true;
         userLogger.info("Сессия активна.");

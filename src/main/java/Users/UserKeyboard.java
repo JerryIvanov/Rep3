@@ -4,6 +4,7 @@ import LineAndStation.LineManager;
 import LineAndStation.MetroLine;
 import LineAndStation.MetroStation;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 
@@ -35,15 +36,14 @@ public class UserKeyboard {
     private static List<List<InlineKeyboardButton>> linesButtonList = new ArrayList<>();
     private static List<List<InlineKeyboardButton>> stationsButtonList = new ArrayList<>();
 
+    private static InlineKeyboardMarkup adminInlineKeyboard;
+
 
     public UserKeyboard() {
         //Step One
         KeyboardRow backAndHelp = new KeyboardRow();
         backAndHelp.add("Назад");
         backAndHelp.add("Помощь");
-
-        KeyboardRow notify = new KeyboardRow();
-        notify.add("Уведомить о встречах");
 
         KeyboardRow near = new KeyboardRow();
 
@@ -52,7 +52,6 @@ public class UserKeyboard {
 
         List<KeyboardRow> replyMarkupStepOneTake = new ArrayList<KeyboardRow>();
         replyMarkupStepOneTake.add(backAndHelp);
-        replyMarkupStepOneTake.add(notify);
         List<KeyboardRow> replyMarkupStepOneGive = new ArrayList<KeyboardRow>();
         replyMarkupStepOneGive.add(backAndHelp);
         replyMarkupStepOneGive.add(myOffers);
@@ -89,7 +88,7 @@ public class UserKeyboard {
                 count++;
             }
 
-            Arrays.sort(lines);
+            //Arrays.sort(lines);
 
             //logUserKeyboard.info("Массив линий метро создан.");
             //logUserKeyboard.info("Размер массива с кнопками - " + linesButtonList.size());
@@ -109,8 +108,6 @@ public class UserKeyboard {
             logUserKeyboard.info("Инициализация окончена");
         }
         linesInit = true;
-
-
         return inlineKeyboardLines.get(0);
     }
 
@@ -141,15 +138,52 @@ public class UserKeyboard {
 
     public synchronized static InlineKeyboardMarkup getInlineKeyboard (Map<String, String> map){
         List<List<InlineKeyboardButton>> list = new ArrayList<>();
-        List<InlineKeyboardButton> buttons;
-
+        int count = 0;
+        int index = 0;
         for (Map.Entry pair: map.entrySet()
              ) {
-            buttons = new ArrayList<>();
-            buttons.add(new InlineKeyboardButton().setText(String.valueOf(pair.getKey())).
-                    setCallbackData(String.valueOf(pair.getValue())));
-            list.add(buttons);
+            if (count % 2 == 0) {
+                list.add(new ArrayList<>());
+                list.get(index).add(new InlineKeyboardButton().setText((String) pair.getKey())
+                        .setCallbackData((String) pair.getValue()));
+                count++;
+            } else {
+                list.get(index).add(new InlineKeyboardButton().setText((String) pair.getKey())
+                        .setCallbackData((String) pair.getValue()));
+                count++;
+                index++;
+            }
         }
         return new InlineKeyboardMarkup().setKeyboard(list);
+    }
+
+    public synchronized static InlineKeyboardMarkup getAdminInlineKeyboard(){
+        if (adminInlineKeyboard == null) {
+            Map<String, String> map = new LinkedHashMap<>();
+            map.put("Участники", "members");
+            map.put("Заместитель", "alternate");
+            map.put("Пароль", "password");
+            map.put("Рассылка", "mailing");
+            map.put("Назад", "back");
+            adminInlineKeyboard = getInlineKeyboard(map);
+        }
+
+        return adminInlineKeyboard;
+    }
+    public synchronized static List<KeyboardRow> getReplyKeyboardCustom(List<String> list){
+        List<KeyboardRow> keyboardRows = new ArrayList<KeyboardRow>();
+        for (int i = 0; i < list.size() + 1; i++){
+            keyboardRows.add(new KeyboardRow());
+        }
+        int count1 = 0;
+        int count = 0;
+        for (String st: list
+             ) {
+            if(count1 != 0 && count1 % 2 == 0) count++;
+            keyboardRows.get(count).add(st);
+            count1++;
+        }
+        logUserKeyboard.info("sending replyKeyboard.");
+        return keyboardRows;
     }
 }

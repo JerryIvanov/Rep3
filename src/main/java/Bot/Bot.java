@@ -1,28 +1,30 @@
 package Bot;
 
-import Users.UserThread;
+import AdminsPanel.AdminsManager;
 import Users.UsersManager;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.meta.api.methods.AnswerCallbackQuery;
 import org.telegram.telegrambots.meta.api.methods.ForwardMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendChatAction;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.send.SendSticker;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.InlineKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKeyboardButton;
-import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardRemove;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
+
 public class Bot extends TelegramLongPollingBot  {
     private static final Logger botLogger = LogManager.getLogger(Bot.class);
     private static final Scheduler scheduler = new Scheduler();
-    public static final long adminId = 712603472;
+    public static final long mainAdminId = 712603472;
 
     public Bot() {
     }
@@ -30,16 +32,9 @@ public class Bot extends TelegramLongPollingBot  {
     @Override
     public synchronized void onUpdateReceived(Update update) {
 
-        if(update.hasMessage()){
-            if(update.getMessage().hasText()){
-
-                botLogger.info("Экземпляр " + update.getMessage().getFrom().getId() + " есть? "
-                + UsersManager.getUsersThreads().containsKey((long)update.getMessage().getFrom().getId()));
-
+        if(update.hasMessage() && update.getMessage().hasText()){
                 if(update.getMessage().getText().equalsIgnoreCase("/start")
-                        || update.getMessage().getText().equalsIgnoreCase("/st")
-                || update.getMessage().getText().equalsIgnoreCase("start")
-                || update.getMessage().getText().equalsIgnoreCase("st")){
+                        || update.getMessage().getText().equalsIgnoreCase("/st")){
 
                     if(update.getMessage().getChatId() != (long)update.getMessage().getFrom().getId()){
                         String lastName = update.getMessage().getFrom().getLastName() == null ? "" :
@@ -50,17 +45,39 @@ public class Bot extends TelegramLongPollingBot  {
                                 update.getMessage().getChatId());
                     }
                         scheduler.scheduleMessageText(update);
-                        UsersManager.getUsersThreads().get((long)update.getMessage().getFrom().getId()).setStep(0d);
+                        //UsersManager.getUsersThreads().get((long)update.getMessage().getFrom().getId()).setStep(0d);
+                }
+                else if(update.getMessage().getText().equalsIgnoreCase("Взять смену") ||
+                update.getMessage().getText().equalsIgnoreCase("Отдать смену")){
+                    sendMessage("Здесь пока ничего нет, доступен обмен встречами - Взять/Отдать встречи.",
+                            (long)update.getMessage().getFrom().getId());
                 }
                 else if(update.getMessage().getText().equals("test")); //testMessage(update);
-                else {
-                    if(update.getMessage().hasText()) scheduler.scheduleMessageText(update);
-                    else scheduler.scheduleCallBack(update);
+                else if(update.getMessage().getText().equalsIgnoreCase("/addadmin")) {
+                    AdminsManager.inRequestHandler(update);
+                }
+                else if(update.getMessage().getText().startsWith("/debug")){
+                    try {
+                        scheduler.adminsAccess(update);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else if(update.getMessage().getText().split(" ")[0].equals("alternate"))
+                    AdminsManager.changeAdmin(update);
+                else scheduler.scheduleMessageText(update);
+            }
+        else if(update.hasCallbackQuery()){
+            if(update.getCallbackQuery().getData().startsWith("debug")){
+                try {
+                    scheduler.adminsAccess(update);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
-        }else if(update.hasCallbackQuery()){
-                scheduler.scheduleCallBack(update);
+            else scheduler.scheduleCallBack(update);
             }
+        else scheduler.scheduleMessageText(update);
         }
    /* @Override
     public void onUpdateReceived(Update update) {
@@ -118,8 +135,10 @@ public class Bot extends TelegramLongPollingBot  {
     public synchronized void sendMessage(String setText, Long setChatId, ReplyKeyboardMarkup replyKeyboardMarkup) {
         SendMessage sendMessage = new SendMessage().setText(setText).setChatId(String.valueOf(setChatId))
                 .setReplyMarkup(replyKeyboardMarkup);
+        //botLogger.info("Keyboard = " + replyKeyboardMarkup.toString());
         try {
             execute(sendMessage);
+            //botLogger.info("Send start mess.");
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
@@ -135,9 +154,56 @@ public class Bot extends TelegramLongPollingBot  {
             e.printStackTrace();
         }
     }
+
+    public synchronized void sendMessage(EditMessageReplyMarkup editMessageReplyMarkup){
+        try {
+            execute(editMessageReplyMarkup);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public synchronized void sendMessage(String setText, Long setChatId, ReplyKeyboardRemove replyKeyboardRemove) {
+        //botLogger.info("Inline sendMess");
+        SendMessage sendMessage = new SendMessage().setText(setText).setChatId(String.valueOf(setChatId));
+        sendMessage.setReplyMarkup(replyKeyboardRemove);
+        try {
+            execute(sendMessage);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+    public synchronized void sendMessage(SendPhoto sendPhoto){
+        try {
+            execute(sendPhoto);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+    public synchronized void sendMessage(SendSticker sendSticker){
+        try {
+            execute(sendSticker);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+    public synchronized void sendMessage (SendChatAction sendChatAction){
+        try {
+            execute(sendChatAction);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
+    public synchronized void sendMessage (AnswerCallbackQuery answerCallbackQuery){
+        try {
+            execute(answerCallbackQuery);
+        } catch (TelegramApiException e) {
+            e.printStackTrace();
+        }
+    }
     public synchronized void sendMessageClearMeetings() {
         //botLogger.info("Inline sendMess");
-        SendMessage sendMessage = new SendMessage().setText("Все встречи удалены.").setChatId(String.valueOf(adminId));
+        SendMessage sendMessage = new SendMessage().setText("Все встречи удалены.").setChatId(String.valueOf(mainAdminId));
         try {
             execute(sendMessage);
         } catch (TelegramApiException e) {
@@ -161,11 +227,25 @@ public class Bot extends TelegramLongPollingBot  {
         }
     }
 
+
+    public static long getMainAdminId() {
+        return mainAdminId;
+    }
+
+
+    /*public String getBotUsername() {
+        return "My_Testing3000Bot";
+    }
+
+    public String getBotToken() {
+        return   "998003448:AAHTZ8rpvqwKG4E77iXqi7AziBHqt4rCxcg";
+    }*/
+
     public String getBotUsername() {
         return "**CHAPPIE RoBot**";
     }
 
     public String getBotToken() {
-        return   "1113127140:AAHSKVk2hBJtxPf4zYY_imA2atiees1Weac";
+        return   "token";
     }
 }

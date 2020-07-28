@@ -17,7 +17,7 @@ public class Step_1 {
 
     private static final Logger userLogger = LogManager.getLogger(Step_1.class);
     static private List<InlineKeyboardMarkup> inlineKeyboardMarkupListLines = new ArrayList<>();
-    private List<InlineKeyboardMarkup> inlineKeyboardMarkupListStations = new ArrayList<>();
+    static private ReplyKeyboardMarkup replyKeyboardMarkupNoNotify;
     static private ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup().setResizeKeyboard(true);
     private static Step_1 stepOne = new Step_1();
     private static Bot bot = UsersManager.getBot();
@@ -52,12 +52,34 @@ public class Step_1 {
                         , replyKeyboardMarkup.setKeyboard(UserKeyboard.getReplyKeyboards().get(1)));
                 thread.setStep(3d);
             }
+            else if(thread.getMessage().equalsIgnoreCase("Уведомить о новых встречах")){
+                sendNotifyLines(thread);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+    public static synchronized void sendNotifyLines (UserThread thread){
+        bot.sendMessage("\uD83D\uDD01Уведомить о новых встречах\uD83D\uDD01️"
+                ,thread.getChatUserId(), inlineKeyboardMarkupListLines.get(0));
+        if(replyKeyboardMarkupNoNotify == null){
+            List<String> list = new ArrayList<>();
+            list.add("Назад");
+            list.add("Помощь");
+            replyKeyboardMarkupNoNotify = new ReplyKeyboardMarkup().setResizeKeyboard(true)
+                    .setKeyboard(UserKeyboard.getReplyKeyboardCustom(list));
+        }
+        bot.sendMessage("Если вы хотите получать все новые предложения по конкретной станции "
+                        + "Выберите ветку метро, затем станцию.⬆️\n" +
+                        "После этого все НОВЫЕ предложения размещенные на этой станции будут автоматически направлены вам.",
+                thread.getChatUserId(), replyKeyboardMarkupNoNotify);
+        thread.setStep(2.2);
+        userLogger.info("sending info for user...");
+    }
+
     public static List<InlineKeyboardMarkup> getInlineKeyboardMarkupListLines() {
         return inlineKeyboardMarkupListLines;
     }
+
 }

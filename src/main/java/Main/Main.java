@@ -1,5 +1,6 @@
 package Main;
 
+import AdminsPanel.ManagerDatabase;
 import Bot.Bot;
 import LineAndStation.LineManager;
 import Users.UserKeyboard;
@@ -14,17 +15,21 @@ import Meeting.SessionMeets;
 
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import java.util.concurrent.TimeUnit;
 
 
 public class Main {
 
-    static UsersManager usersManager;
-    static LineManager lineManager;
     static final Logger rootLogger = LogManager.getRootLogger();
-    static final Logger userLogger = LogManager.getLogger(Bot.class);
-    public static final String DB_URL = "jdbc:h2:/C:/Users/JerryIvanov/IdeaProjects/TeleBot2/db/stockExchange";
-    public static final String DB_Driver = "org.h2.Driver";
-
+    private static final Logger userLogger = LogManager.getLogger(Bot.class);
+    public static final String DB_URL = ("URL");
+    private static final String userName = "gssoomqcinrwxx";
+    private static final String password = "pass";
+    public static final String DB_Driver = "org.postgresql.Driver";
+    private static UsersManager usersManager;
+    private static LineManager lineManager;
+    private static  UserKeyboard userKeyboard;
+    private static ManagerDatabase managerDatabase;
 
     public static void main(String[] args) {
         /*System.getProperties().put("proxySet", "true");
@@ -32,50 +37,57 @@ public class Main {
         System.getProperties().put("socksProxyPort", "9150");*/
         ApiContextInitializer.init();
         TelegramBotsApi telegramBotsApi = new TelegramBotsApi();
-        Bot bot = new Bot();
-        usersManager = UsersManager.getUsersManagerInstance();
-        usersManager.setBots(bot);
+        managerDatabase = new ManagerDatabase();
         lineManager = new LineManager();
-        UserKeyboard userKeyboard = new UserKeyboard();
+        usersManager = UsersManager.getUsersManagerInstance();
+        userKeyboard = new UserKeyboard();
+        Bot bot = new Bot();
+        usersManager.setBots(bot);
         sleepTimeToDelete();
         userLogger.info("start");
         try {
             telegramBotsApi.registerBot(bot);
             Class.forName(DB_Driver);
-            Connection connection = DriverManager.getConnection(DB_URL);
-            userLogger.info("Соединение с СУБД установлено");
-            connection.close();
-            userLogger.info("Соединение с СУБД разорвано");
+            userLogger.info("Connect to DB");
+            createTables();
         }catch (TelegramApiRequestException e){
             e.printStackTrace();
         }
         catch (ClassNotFoundException e){
             e.printStackTrace();
-            System.out.println("JDBC драйвер не найден");
+            System.out.println("JDBC not found");
         }
-        catch (SQLException e){
-            e.printStackTrace();
-            System.out.println("Ошибка SQL");
-        }
+    }
+
+    private static void createTables(){
+        ManagerDatabase.createMasterPassTable();
+        ManagerDatabase.createTableUsers();
+        ManagerDatabase.createTableAdmins();
+    }
+
+
+    public static ManagerDatabase getManagerDatabase() {
+        return managerDatabase;
+    }
+
+    public static Connection getConnect() throws SQLException {
+        return DriverManager.getConnection(DB_URL);
     }
 
     public static void sleepTimeToDelete(){
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
         String currentTime = simpleDateFormat.format(new Date());
         //userLogger.info("Date = " + currentTime);
-        int HH = (Integer.parseInt(currentTime.split(":")[0])) * 60 * 60 * 1000;
+        int hours = (Integer.parseInt(currentTime.split(":")[0]));
+        int HH = ((Integer.parseInt(currentTime.split(":")[0])) + 3) * 60 * 60 * 1000;
         int mm = (Integer.parseInt(currentTime.split(":")[1])) * 60 * 1000;
         int ss = (Integer.parseInt(currentTime.split(":")[2])) * 1000;
-        int timeToSleep = 21 * 60 * 60 * 1000;
+        int timeToSleep = 24 * 60 * 60 * 1000;
 
-        if(timeToSleep - HH == 0 && mm == 0) timeToSleep += 4 * 60 * 60 * 1000;
-        else {
-            timeToSleep -= HH;
-            timeToSleep -= mm;
-            timeToSleep -= ss;
-        }
-        //int timeToSleep = 1000 * 120;
-        userLogger.info("Time to clearlist of meetings in minutes = " + timeToSleep / 1000 / 60 );
+        //go to
+
+            timeToSleep = timeToSleep - HH - mm - ss;
+        userLogger.info("Time to clearlist of meetings in minutes = " + TimeUnit.MILLISECONDS.toMinutes(timeToSleep));
         new SessionMeets(true, null, null, timeToSleep).start();
     }
 }
